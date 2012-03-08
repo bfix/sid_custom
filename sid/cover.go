@@ -25,15 +25,28 @@ package sid
 
 type CustomCover struct {
 	posts	map[string]([]byte)		// list of cover POST replacements
+	htmls	map[string]string		// list of pre-defined HTML pages
 }
 
 ///////////////////////////////////////////////////////////////////////
 // Public functions
 
-func NewCocer() *CustomCover {
-	return &CustomCover {
-		posts: make (map[string]([]byte)),
+/*
+ * Instantiate custom cover object.
+ * @return *CustoCover - reference to new instance
+ */
+func NewCover() *CustomCover {
+
+	// allocate object
+	inst := &CustomCover {
+		posts:	make (map[string]([]byte)),
+		htmls:	make (map[string]string),
 	}
+	// set pre-defined pages
+	inst.htmls["/"] = "[UPLOAD]"
+	
+	// return new initialized instance
+	return inst
 }
 
 //=====================================================================
@@ -46,10 +59,15 @@ func (self *CustomCover) GetAddress() string {
 }
 
 //---------------------------------------------------------------------
-func (self *CustomCover) GetHtmls() map[string]string {
-	htmls := make (map[string]string)
-	htmls["/"] = "[UPLOAD]"
-	return htmls
+/*
+ * Get pre-defined HTML page.
+ * @param res string - resource name
+ * @return string - HTML page content
+ * @return bool - page defined?
+ */
+func (self *CustomCover) GetHtml (res string) (page string, ok bool) {
+	page,ok = self.htmls[res]
+	return
 }
 
 //---------------------------------------------------------------------
