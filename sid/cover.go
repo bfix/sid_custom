@@ -29,6 +29,14 @@ type CustomCover struct {
 
 ///////////////////////////////////////////////////////////////////////
 // Public functions
+
+func NewCocer() *CustomCover {
+	return &CustomCover {
+		posts: make (map[string]([]byte)),
+	}
+}
+
+//=====================================================================
 /*
  * Get address of cover server.
  * @return string - server address (name:port)
@@ -37,14 +45,29 @@ func (self *CustomCover) GetAddress() string {
 	return "imgon.net:80"
 }
 
-//=====================================================================
+//---------------------------------------------------------------------
 func (self *CustomCover) GetHtmls() map[string]string {
 	htmls := make (map[string]string)
 	htmls["/"] = "[UPLOAD]"
 	return htmls
 }
 
-//=====================================================================
+//---------------------------------------------------------------------
+/*
+ * get cover site POST content for given boundary id.
+ * @param id string - boundary id (key used to store POST content)
+ * @return []byte - POST content
+ */
+func (self *CustomCover) GetPostContent (id string) []byte {
+	if post,ok := self.posts[id]; ok {
+		// delete POST from list
+		self.posts[id] = nil,false
+		return post
+	}
+	return nil
+}
+
+//---------------------------------------------------------------------
 /*
  * Get client-side upload form for next cover content.
  * @param delim striong - boundary identifier
@@ -122,18 +145,3 @@ func (self *CustomCover) GetUploadForm (delim, name, mime, cmt string, data []by
 	self.posts[delim] = []byte(post)
 	return "/upload/" + delim, len(self.posts[delim])+32
 } 
-
-//=====================================================================
-/*
- * get cover site POST content for given boundary id.
- * @param id string - boundary id (key used to store POST content)
- * @return []byte - POST content
- */
-func (self *CustomCover) GetPostContent (id string) []byte {
-	if post,ok := self.posts[id]; ok {
-		// delete POST from list
-		self.posts[id] = nil,false
-		return post
-	}
-	return nil
-}
