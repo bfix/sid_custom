@@ -86,7 +86,7 @@ func CustomConfig (mode int, param *parser.Parameter) bool {
  */
 func ShowCustomConfig () {
 	// list current configuration data
-	logger.Println (logger.INFO, "[config] !==========< configuration >===============")
+	logger.Println (logger.INFO, "[config] !==========< custom configuration >===============")
 	logger.Println (logger.INFO, "[config] !Image library definition: " + Cfg.ImageDefs)
 	logger.Println (logger.INFO, "[config] !Port for HTTPS sessions: " + strconv.Itoa(Cfg.HttpsPort))
 	logger.Println (logger.INFO, "[config] !HTTPS certificate: " + Cfg.HttpsCert)
