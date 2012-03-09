@@ -1,0 +1,35 @@
+
+SID_Custom: Custom "Server In Disguise"
+=======================================
+
+(c) 2011-2012 Bernd Fix   >Y<
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Server In Disguise
+------------------
+
+The "server in disguise" framework (see http://github.com/bfix/sid) is
+used to write cover traffic applications that allow anonymous upload of
+documents via TOR. It uses cover traffic to cover servers to disguise
+the upload process and to make eavesdropper believe (from looking at
+packet timing and sizes) that the uploader is actually talking to the
+cover server (instead of talking to the SID server).
+
+What is this?
+------------- 
+
+This is an example application build with the SID framework. It uses images
+to generate cover traffic by using public picture posts as cover servers. It
+is intended to serve as a starting point for your own SID development.  
