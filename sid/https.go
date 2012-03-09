@@ -113,8 +113,8 @@ func httpsServe() {
 	http.HandleFunc ("/", handler)
 	
 	// start server
-	logger.Println (logger.INFO, "[https] Starting server.")
 	addr := ":" + strconv.Itoa(Cfg.HttpsPort)
+	logger.Println (logger.INFO, "[https] Starting server on " + addr)
 	if err := http.ListenAndServeTLS (addr, Cfg.HttpsCert, Cfg.HttpsKey, nil);  err != nil {
 		logger.Println (logger.ERROR, "[https] " + err.String())
 	}
