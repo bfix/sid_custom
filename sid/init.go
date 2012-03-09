@@ -36,11 +36,20 @@ func main () {
 
 	// set custom initialization handler
 	sid.CustomInitialization = func() *sid.Cover {
+	
+		// show custom configuration settings
+		ShowCustomConfig()
+		
+		// start manager for image-based cover content
 		InitImageHandler()
-		httpsServe()
+		
+		// fire off HTTPS server
+		go httpsServe()
+		
+		// return new custom cover instance
 		return NewCover()
 	}
 	
-	// fire and forget
+	// start framework
 	sid.Startup()
 }
