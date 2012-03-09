@@ -99,7 +99,7 @@ func InitImageHandler () {
 	rdr,err := os.Open (Cfg.ImageDefs)
 	if err != nil {
 		// terminate application in case of failure
-		logger.Println (logger.ERROR, "[sid.images] Can't read image definitions -- terminating!")
+		logger.Println (logger.ERROR, "[images] Can't read image definitions -- terminating!")
 		os.Exit (1)
 	}
 	defer rdr.Close()
@@ -108,11 +108,11 @@ func InitImageHandler () {
 	var list ImageList
 	xml.Unmarshal (rdr, &list)	
 	for _,img := range list.Image {
-		logger.Println (logger.DBG, "[sid.images]: image=" + img.Name)
+		logger.Println (logger.DBG, "[images]: image=" + img.Name)
 		// get size of image file
 		fi,err := os.Stat (img.Path)
 		if err != nil {
-			logger.Println (logger.ERROR, "[sid.images] image '" + img.Path + "' missing!")
+			logger.Println (logger.ERROR, "[images] image '" + img.Path + "' missing!")
 			continue
 		}
 		// clone to reference instance
@@ -126,7 +126,7 @@ func InitImageHandler () {
 		// add to image list
 		imgList = append (imgList, ir)
 	}
-	logger.Printf (logger.INFO, "[sid.images] %d images available\n", len(imgList))
+	logger.Printf (logger.INFO, "[images] %d images available\n", len(imgList))
 }
 
 //---------------------------------------------------------------------
