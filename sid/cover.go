@@ -18,71 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sid
+package main
 
 ///////////////////////////////////////////////////////////////////////
-// Public types 
+// Import external declarations.
 
-type CustomCover struct {
-	posts	map[string]([]byte)		// list of cover POST replacements
-	htmls	map[string]string		// list of pre-defined HTML pages
-}
+import (
+	"net"
+	"strconv"
+	"sid"
+	"gospel/logger"
+)
 
 ///////////////////////////////////////////////////////////////////////
-// Public functions
-
 /*
- * Instantiate custom cover object.
- * @return *CustoCover - reference to new instance
+ * Create a new cover server instance
+ * @return *sid.Cover - pointer to cover server instance
  */
-func NewCover() *CustomCover {
-
-	// allocate object
-	inst := &CustomCover {
-		posts:	make (map[string]([]byte)),
-		htmls:	make (map[string]string),
+func NewCover() *sid.Cover {
+	// allocate cover instance
+	cover := &sid.Cover {
+		Address:		"imgon.net:80",
+		States:			make (map[net.Conn]*sid.State),
+		Posts:			make (map[string]([]byte)),
+		Pages:			make (map[string]string),
+		GetUploadForm:	GetUploadForm,
 	}
-	// set pre-defined pages
-	inst.htmls["/"] = "[UPLOAD]"
-	
-	// return new initialized instance
-	return inst
-}
-
-//=====================================================================
-/*
- * Get address of cover server.
- * @return string - server address (name:port)
- */
-func (self *CustomCover) GetAddress() string {
-	return "imgon.net:80"
-}
-
-//---------------------------------------------------------------------
-/*
- * Get pre-defined HTML page.
- * @param res string - resource name
- * @return string - HTML page content
- * @return bool - page defined?
- */
-func (self *CustomCover) GetHtml (res string) (page string, ok bool) {
-	page,ok = self.htmls[res]
-	return
-}
-
-//---------------------------------------------------------------------
-/*
- * get cover site POST content for given boundary id.
- * @param id string - boundary id (key used to store POST content)
- * @return []byte - POST content
- */
-func (self *CustomCover) GetPostContent (id string) []byte {
-	if post,ok := self.posts[id]; ok {
-		// delete POST from list
-		self.posts[id] = nil,false
-		return post
-	}
-	return nil
+	cover.Pages["/"] = "[UPLOAD]"
+	return cover
 }
 
 //---------------------------------------------------------------------
@@ -132,7 +95,21 @@ func (self *CustomCover) GetPostContent (id string) []byte {
  *-----------------------------<boundary>--
  *<nl>
  */
-func (self *CustomCover) GetUploadForm (delim, name, mime, cmt string, data []byte) (string, int) {
+func GetUploadForm (c *sid.Cover) string {
+
+	// create boundary identifier and load next image
+ 	delim := sid.CreateId (30)
+	img := GetNextImage()
+	
+	// create uploadable content 
+	content := make ([]byte, 0)
+	if err := sid.ProcessFile (img.path, 4096, func (data []byte) bool {
+		content = append (content, data...)
+		return true
+	}); err != nil {
+		logger.Println (logger.ERROR, "[cover] Failed to open upload file: " + img.path)
+		return ""
+	}
 
 	// build POST content suitable for upload to cover site
 	// and save it in the handler structure
@@ -146,12 +123,12 @@ func (self *CustomCover) GetUploadForm (delim, name, mime, cmt string, data []by
 		sep + lb +
 		"Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
 		sep + lb +
-		"Content-Disposition: form-data; name=\"file[]\"; filename=\"" + name + "\"" + lb +
- 		"Content-Type: " + mime + lb2 +
- 		string(data) + lb +
+		"Content-Disposition: form-data; name=\"file[]\"; filename=\"" + img.name + "\"" + lb +
+ 		"Content-Type: " + img.mime + lb2 +
+ 		string(content) + lb +
 		sep + lb +
 		"Content-Disposition: form-data; name=\"alt[]\"\n\n" +
- 		cmt + lb +
+ 		img.comment + lb +
 		sep + lb +
  		"Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
 		sep + lb +
@@ -160,6 +137,31 @@ func (self *CustomCover) GetUploadForm (delim, name, mime, cmt string, data []by
 		"Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
 		sep + "--" + lb2
 	
-	self.posts[delim] = []byte(post)
-	return "/upload/" + delim, len(self.posts[delim])+32
+	c.Posts[delim] = []byte(post)
+	action := "/upload/" + delim
+	total := len(c.Posts[delim])+32
+
+	// assemble upload form
+	return	"<h1>Upload your document:</h1>\n" +
+			"<script type=\"text/javascript\">\n" +
+				"function a(){" +
+					"b=document.u.file.files.item(0).getAsDataURL();" +
+					"e=document.u.file.value.length;" +
+					"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
+					"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
+					"document.u.rnd.value=d;" +
+					"document.u.submit();" +
+				"}\n" +
+				"document.write(\"" +
+					"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
+						"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
+						"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
+						"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
+					"</form>\");\n" +
+			"</script>\n</head>\n<body>\n" +
+			"<noscript><hr/><p><font color=\"red\"><b>" +
+				"Uploading files requires JavaScript enabled! Please change the settings " +
+				"of your browser and try again...</b></font></p><hr/>" +
+			"</noscript>\n" +
+			"<hr/>\n"
 } 
