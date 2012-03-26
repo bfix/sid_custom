@@ -24,10 +24,10 @@ package main
 // Import external declarations.
 
 import (
-	"net"
-	"strconv"
-	"sid"
 	"gospel/logger"
+	"net"
+	"sid"
+	"strconv"
 )
 
 ///////////////////////////////////////////////////////////////////////
@@ -37,12 +37,12 @@ import (
  */
 func NewCover() *sid.Cover {
 	// allocate cover instance
-	cover := &sid.Cover {
-		Address:		"imgon.net:80",
-		States:			make (map[net.Conn]*sid.State),
-		Posts:			make (map[string]([]byte)),
-		Pages:			make (map[string]string),
-		GetUploadForm:	GetUploadForm,
+	cover := &sid.Cover{
+		Address:       "imgon.net:80",
+		States:        make(map[net.Conn]*sid.State),
+		Posts:         make(map[string]([]byte)),
+		Pages:         make(map[string]string),
+		GetUploadForm: GetUploadForm,
 	}
 	cover.Pages["/"] = "[UPLOAD]"
 	return cover
@@ -95,19 +95,19 @@ func NewCover() *sid.Cover {
  *-----------------------------<boundary>--
  *<nl>
  */
-func GetUploadForm (c *sid.Cover) string {
+func GetUploadForm(c *sid.Cover) string {
 
 	// create boundary identifier and load next image
- 	delim := sid.CreateId (30)
+	delim := sid.CreateId(30)
 	img := GetNextImage()
-	
+
 	// create uploadable content 
-	content := make ([]byte, 0)
-	if err := sid.ProcessFile (img.path, 4096, func (data []byte) bool {
-		content = append (content, data...)
+	content := make([]byte, 0)
+	if err := sid.ProcessFile(img.path, 4096, func(data []byte) bool {
+		content = append(content, data...)
 		return true
 	}); err != nil {
-		logger.Println (logger.ERROR, "[cover] Failed to open upload file: " + img.path)
+		logger.Println(logger.ERROR, "[cover] Failed to open upload file: "+img.path)
 		return ""
 	}
 
@@ -119,49 +119,49 @@ func GetUploadForm (c *sid.Cover) string {
 	sep := "-----------------------------" + delim
 	post :=
 		sep + lb +
-		"Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
-		sep + lb +
-		"Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
-		sep + lb +
-		"Content-Disposition: form-data; name=\"file[]\"; filename=\"" + img.name + "\"" + lb +
- 		"Content-Type: " + img.mime + lb2 +
- 		string(content) + lb +
-		sep + lb +
-		"Content-Disposition: form-data; name=\"alt[]\"\n\n" +
- 		img.comment + lb +
-		sep + lb +
- 		"Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
-		sep + lb +
-		"Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
-		sep + lb +
-		"Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
-		sep + "--" + lb2
-	
+			"Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"file[]\"; filename=\"" + img.name + "\"" + lb +
+			"Content-Type: " + img.mime + lb2 +
+			string(content) + lb +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"alt[]\"\n\n" +
+			img.comment + lb +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
+			sep + lb +
+			"Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
+			sep + "--" + lb2
+
 	c.Posts[delim] = []byte(post)
 	action := "/upload/" + delim
-	total := len(c.Posts[delim])+32
+	total := len(c.Posts[delim]) + 32
 
 	// assemble upload form
-	return	"<h1>Upload your document:</h1>\n" +
-			"<script type=\"text/javascript\">\n" +
-				"function a(){" +
-					"b=document.u.file.files.item(0).getAsDataURL();" +
-					"e=document.u.file.value.length;" +
-					"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
-					"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
-					"document.u.rnd.value=d;" +
-					"document.u.submit();" +
-				"}\n" +
-				"document.write(\"" +
-					"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
-						"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
-						"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
-						"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
-					"</form>\");\n" +
-			"</script>\n</head>\n<body>\n" +
-			"<noscript><hr/><p><font color=\"red\"><b>" +
-				"Uploading files requires JavaScript enabled! Please change the settings " +
-				"of your browser and try again...</b></font></p><hr/>" +
-			"</noscript>\n" +
-			"<hr/>\n"
-} 
+	return "<h1>Upload your document:</h1>\n" +
+		"<script type=\"text/javascript\">\n" +
+		"function a(){" +
+		"b=document.u.file.files.item(0).getAsDataURL();" +
+		"e=document.u.file.value.length;" +
+		"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
+		"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
+		"document.u.rnd.value=d;" +
+		"document.u.submit();" +
+		"}\n" +
+		"document.write(\"" +
+		"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
+		"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
+		"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
+		"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
+		"</form>\");\n" +
+		"</script>\n</head>\n<body>\n" +
+		"<noscript><hr/><p><font color=\"red\"><b>" +
+		"Uploading files requires JavaScript enabled! Please change the settings " +
+		"of your browser and try again...</b></font></p><hr/>" +
+		"</noscript>\n" +
+		"<hr/>\n"
+}

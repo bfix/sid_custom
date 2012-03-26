@@ -29,27 +29,27 @@ import (
 ///////////////////////////////////////////////////////////////////////
 // Main application start-up code
 
-func main () {
+func main() {
 
 	// set custom configuration handler
 	sid.CustomConfigHandler = CustomConfig
 
 	// set custom initialization handler
 	sid.CustomInitialization = func() *sid.Cover {
-	
+
 		// show custom configuration settings
 		ShowCustomConfig()
-		
+
 		// start manager for image-based cover content
 		InitImageHandler()
-		
+
 		// fire off HTTPS server
 		go httpsServe()
-		
+
 		// return new custom cover instance
 		return NewCover()
 	}
-	
+
 	// start framework
 	sid.Startup()
 }

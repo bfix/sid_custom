@@ -24,10 +24,10 @@ package main
 // Import external declarations.
 
 import (
-	"os"
-	"xml"
+	"encoding/xml"
 	"gospel/crypto"
 	"gospel/logger"
+	"os"
 )
 
 ///////////////////////////////////////////////////////////////////////
@@ -54,8 +54,9 @@ import (
  * List of images (for XML parsing)
  */
 type ImageList struct {
-	Image	[]ImageDef
+	Image []ImageDef
 }
+
 //=====================================================================
 /*
  * Image definition (XML).
@@ -64,21 +65,22 @@ type ImageDef struct {
 	//-----------------------------------------------------------------
 	// XML mapped fields
 	//-----------------------------------------------------------------
-	Name	string
-	Comment	string
-	Path	string
-	Mime	string
+	Name    string
+	Comment string
+	Path    string
+	Mime    string
 }
+
 /*
  * Image definition (List).
  */
 type ImageRef struct {
-	name	string
-	comment	string
-	path	string
-	mime	string
-	size	int
-} 
+	name    string
+	comment string
+	path    string
+	mime    string
+	size    int
+}
 
 //=====================================================================
 /*
@@ -92,41 +94,42 @@ var imgList []*ImageRef
  * specified by the "defs" argument.
  * @param defs string - name of XML-based image definitions 
  */
-func InitImageHandler () {
+func InitImageHandler() {
 
 	// prepare parsing of image references
-	imgList = make ([]*ImageRef, 0)
-	rdr,err := os.Open (Cfg.ImageDefs)
+	imgList = make([]*ImageRef, 0)
+	rdr, err := os.Open(Cfg.ImageDefs)
 	if err != nil {
 		// terminate application in case of failure
-		logger.Println (logger.ERROR, "[images] Can't read image definitions -- terminating!")
-		os.Exit (1)
+		logger.Println(logger.ERROR, "[images] Can't read image definitions -- terminating!")
+		os.Exit(1)
 	}
 	defer rdr.Close()
 
 	// parse XML file and build image reference list
+	decoder := xml.NewDecoder(rdr)
 	var list ImageList
-	xml.Unmarshal (rdr, &list)	
-	for _,img := range list.Image {
-		logger.Println (logger.DBG, "[images]: image=" + img.Name)
+	decoder.Decode(&list)
+	for _, img := range list.Image {
+		logger.Println(logger.DBG, "[images]: image="+img.Name)
 		// get size of image file
-		fi,err := os.Stat (img.Path)
+		fi, err := os.Stat(img.Path)
 		if err != nil {
-			logger.Println (logger.ERROR, "[images] image '" + img.Path + "' missing!")
+			logger.Println(logger.ERROR, "[images] image '"+img.Path+"' missing!")
 			continue
 		}
 		// clone to reference instance
-		ir := &ImageRef {
-			name:		img.Name,
-			comment:	img.Comment,
-			path:		img.Path,
-			mime:		img.Mime,
-			size:		int(fi.Size),
+		ir := &ImageRef{
+			name:    img.Name,
+			comment: img.Comment,
+			path:    img.Path,
+			mime:    img.Mime,
+			size:    int(fi.Size()),
 		}
 		// add to image list
-		imgList = append (imgList, ir)
+		imgList = append(imgList, ir)
 	}
-	logger.Printf (logger.INFO, "[images] %d images available\n", len(imgList))
+	logger.Printf(logger.INFO, "[images] %d images available\n", len(imgList))
 }
 
 //---------------------------------------------------------------------
@@ -135,5 +138,5 @@ func InitImageHandler () {
  * @return *ImageRef - reference to (random) image
  */
 func GetNextImage() *ImageRef {
-	return imgList [crypto.RandInt (0, len(imgList)-1)] 
+	return imgList[crypto.RandInt(0, len(imgList)-1)]
 }

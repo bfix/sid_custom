@@ -24,10 +24,10 @@ package main
 // Import external declarations.
 
 import (
-	"sid"
-	"strconv"
 	"gospel/logger"
 	"gospel/parser"
+	"sid"
+	"strconv"
 )
 
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,10 @@ import (
  * additional HTTPS server part for low-security up- and downloads.
  */
 type CustomCfg struct {
-	ImageDefs		string		// name of cover image definition file
-	HttpsPort		int			// port for HTTPS sessions
-	HttpsCert		string		// name of HTTPS certificate file
-	HttpsKey		string		// name of HTTPS key file
+	ImageDefs string // name of cover image definition file
+	HttpsPort int    // port for HTTPS sessions
+	HttpsCert string // name of HTTPS certificate file
+	HttpsKey  string // name of HTTPS key file
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -51,12 +51,12 @@ type CustomCfg struct {
 /*
  * Custom configuration instance:
  */
-var Cfg CustomCfg = CustomCfg {
-	ImageDefs:	"./images/images.xml",	// image definition file
-	HttpsPort:	443,					// port for HTTPS connections
-	HttpsCert:	"./cert.pem",			// HTTPS certificate
-	HttpsKey:	"./key.pem",			// HTTPS key
-}	
+var Cfg CustomCfg = CustomCfg{
+	ImageDefs: "./images/images.xml", // image definition file
+	HttpsPort: 443,                   // port for HTTPS connections
+	HttpsCert: "./cert.pem",          // HTTPS certificate
+	HttpsKey:  "./key.pem",           // HTTPS key
+}
 
 ///////////////////////////////////////////////////////////////////////
 // Public functions and methods
@@ -67,29 +67,34 @@ var Cfg CustomCfg = CustomCfg {
  * @param param *parser.Parameter - key/value setting
  * @return bool - continue configuration processing?
  */
-func CustomConfig (mode int, param *parser.Parameter) bool {
+func CustomConfig(mode int, param *parser.Parameter) bool {
 	if param != nil {
 		if mode != parser.LIST {
 			switch param.Name {
-				case "HttpsPort":		sid.SetIntValue (&Cfg.HttpsPort, param.Value)
-				case "HttpsCert":		Cfg.HttpsCert = param.Value
-				case "HttpsKey":		Cfg.HttpsKey = param.Value
-				case "ImageDefs":		Cfg.ImageDefs = param.Value
+			case "HttpsPort":
+				sid.SetIntValue(&Cfg.HttpsPort, param.Value)
+			case "HttpsCert":
+				Cfg.HttpsCert = param.Value
+			case "HttpsKey":
+				Cfg.HttpsKey = param.Value
+			case "ImageDefs":
+				Cfg.ImageDefs = param.Value
 			}
 		}
-	} 
+	}
 	return true
 }
+
 //---------------------------------------------------------------------
 /*
  * Show custom configration settings.
  */
-func ShowCustomConfig () {
+func ShowCustomConfig() {
 	// list current configuration data
-	logger.Println (logger.INFO, "[config] !==========< custom configuration >===============")
-	logger.Println (logger.INFO, "[config] !Image library definition: " + Cfg.ImageDefs)
-	logger.Println (logger.INFO, "[config] !Port for HTTPS sessions: " + strconv.Itoa(Cfg.HttpsPort))
-	logger.Println (logger.INFO, "[config] !HTTPS certificate: " + Cfg.HttpsCert)
-	logger.Println (logger.INFO, "[config] !HTTPS SSL key: " + Cfg.HttpsKey)
-	logger.Println (logger.INFO, "[config] !==========================================")
+	logger.Println(logger.INFO, "[config] !==========< custom configuration >===============")
+	logger.Println(logger.INFO, "[config] !Image library definition: "+Cfg.ImageDefs)
+	logger.Println(logger.INFO, "[config] !Port for HTTPS sessions: "+strconv.Itoa(Cfg.HttpsPort))
+	logger.Println(logger.INFO, "[config] !HTTPS certificate: "+Cfg.HttpsCert)
+	logger.Println(logger.INFO, "[config] !HTTPS SSL key: "+Cfg.HttpsKey)
+	logger.Println(logger.INFO, "[config] !==========================================")
 }

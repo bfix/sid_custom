@@ -24,11 +24,11 @@ package main
 // Import external declarations.
 
 import (
-	"http"
+	"gospel/logger"
+	"net/http"
+	"sid"
 	"strconv"
 	"strings"
-	"sid"
-	"gospel/logger"
 )
 
 ///////////////////////////////////////////////////////////////////////
@@ -37,44 +37,44 @@ import (
  * @param resp http.ResponseWriter - response buffer
  * @param req *http.Request - request data
  */
-func handler (resp http.ResponseWriter, req *http.Request) {
+func handler(resp http.ResponseWriter, req *http.Request) {
 
 	// get requested resource reference
 	ref := req.URL.String()
 	mth := req.Method
-	logger.Println (logger.DBG_ALL, "[https] " + mth + " " + ref)
-	
+	logger.Println(logger.DBG_ALL, "[https] "+mth+" "+ref)
+
 	//-----------------------------------------------------------------
 	// check for POST request (document upload)
 	//-----------------------------------------------------------------
 	if mth == "POST" {
 		// get upload data
-		rdr,_,err := req.FormFile ("file")
+		rdr, _, err := req.FormFile("file")
 		if err != nil {
-			logger.Println (logger.INFO, "[https] Error accessing uploaded file: " + err.String())
+			logger.Println(logger.INFO, "[https] Error accessing uploaded file: "+err.Error())
 			// show error page
 			ref = "/upload_err.html"
 			mth = "GET"
 		} else {
-			content := make ([]byte, 0)
-			if err = sid.ProcessStream (rdr, 4096, func (data []byte) bool {
-				content = append (content, data...)
+			content := make([]byte, 0)
+			if err = sid.ProcessStream(rdr, 4096, func(data []byte) bool {
+				content = append(content, data...)
 				return true
 			}); err != nil {
-				logger.Println (logger.INFO, "[https] Error accessing uploaded file: " + err.String())
+				logger.Println(logger.INFO, "[https] Error accessing uploaded file: "+err.Error())
 				// show error page
 				ref = "/upload_err.html"
 				mth = "GET"
 			} else {
 				// post-process uploaded document
-				sid.PostprocessUploadData (content)
+				sid.PostprocessUploadData(content)
 				// set resource ref to response page
 				ref = "/upload_resp.html"
 				mth = "GET"
 			}
 		}
 	}
-	
+
 	//-----------------------------------------------------------------
 	// handle GET requests
 	//-----------------------------------------------------------------
@@ -85,14 +85,15 @@ func handler (resp http.ResponseWriter, req *http.Request) {
 		}
 		// handle resource file
 		switch {
-			case strings.HasSuffix (ref, ".html"):		resp.Header().Set ("Content-Type", "text/html")
+		case strings.HasSuffix(ref, ".html"):
+			resp.Header().Set("Content-Type", "text/html")
 		}
-		if err := sid.ProcessFile ("./www" + ref, 4096, func (data []byte) bool {
+		if err := sid.ProcessFile("./www"+ref, 4096, func(data []byte) bool {
 			// append data to response buffer
-			resp.Write (data)
+			resp.Write(data)
 			return true
 		}); err != nil {
-			logger.Println (logger.ERROR, "[https] Resource failure: " + err.String())
+			logger.Println(logger.ERROR, "[https] Resource failure: "+err.Error())
 		}
 	}
 }
@@ -105,17 +106,17 @@ func httpsServe() {
 
 	// check for disabled HTTPS server
 	if Cfg.HttpsPort < 0 {
-		logger.Println (logger.INFO, "[https] HTTPS server disabled.")
+		logger.Println(logger.INFO, "[https] HTTPS server disabled.")
 		return
 	}
 
 	// define handlers
-	http.HandleFunc ("/", handler)
-	
+	http.HandleFunc("/", handler)
+
 	// start server
 	addr := ":" + strconv.Itoa(Cfg.HttpsPort)
-	logger.Println (logger.INFO, "[https] Starting server on " + addr)
-	if err := http.ListenAndServeTLS (addr, Cfg.HttpsCert, Cfg.HttpsKey, nil);  err != nil {
-		logger.Println (logger.ERROR, "[https] " + err.String())
+	logger.Println(logger.INFO, "[https] Starting server on "+addr)
+	if err := http.ListenAndServeTLS(addr, Cfg.HttpsCert, Cfg.HttpsKey, nil); err != nil {
+		logger.Println(logger.ERROR, "[https] "+err.Error())
 	}
 }
