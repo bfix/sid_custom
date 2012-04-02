@@ -15,17 +15,18 @@ To install GO on your computer you must have the usual C Compiler tools
 installed; on Debian this requires the packages *awk*, *bison*, *gcc* and
 *make* (see <http://golang.org/doc/install.html#ctools> for more info) and a
 working "Mercurial" (source control management software) on your box (for more
-info see <http://golang.org/doc/install.html#mercurial>).
+info see <http://golang.org/doc/install.html#mercurial>). You need to install
+the current TIP release of Go1 for this archive to compile correctly.
 
-Use a directory of your choice (I recommend to use the `/opt` directory
-if you are allowed to create sub-directories under `/opt`) and then to
+Use a directory of your choice (I recommend to use the `/opt/go` directory
+if you are allowed to create sub-directories under `/opt/go`) and then to
 change into this directory. Next you fetch a snapshot of the GO
 repository and compile and test it:
 
-	$ cd /opt
-	$ hg clone https://go.googlecode.com/hg/ go
-	$ cd go
-	$ hg update release
+	$ cd /opt/go
+	$ hg clone https://code.google.com/p/go golang
+	$ cd golang
+	$ hg update tip
 	$ cd src
 	$ ./all.bash
 
@@ -35,9 +36,30 @@ to a start-up file (like `.bashrc`) after you changed it to match your soft-
 and hardware environment:
 
 	export GOOS=linux
-	export GOARCH=386
-	export GOROOT=/opt/go
+	export GOARCH=amd64
+	export GOROOT=/opt/go/golang
 	export PATH=${PATH}:${GOROOT}/bin
+	
+#### GO1 sub-repositories
+
+With the release of Go1 some code needed by SID has been moved into sub-
+repositories. At least the 'go.crypto' sub-repository must be installed
+locally:
+
+	$ cd /opt/go/libs
+	$ mkdir -p sub/code.google.com/p
+	$ cd sub/code.google.com/p
+	$ hg clone https://code.google.com/p/go.crypto
+	$ cd ../..
+	$ go install -v ./... 
+
+Make sure you set a GOPATH variable to the sub-repository:
+
+	$ export GOPATH=/opt/go/libs/sub
+	
+N.B.: If you want to instalkl further Go1 sub-repositories, I recommend to
+put them under the same base directory (/opt/go/libs/sub) so you don't need
+additional GOPATH elments and have all Google GO libraries in one place.
 
 ### GOSPEL
 
@@ -45,14 +67,15 @@ GOSPEL is the "GO SPEcial Library" and an Open-Source project. To install
 the required GOSPEL packages for SID on your computer, you need a working
 *git* installation; then simply issue the following commands:
 
-	$ mkdir /opt/go-libs
-	$ cd /opt/go-libs
+	$ mkdir /opt/go/libs
+	$ cd /opt/go/libs
 	$ git clone git://github.com/bfix/gospel gospel
 	$ cd gospel/src
 	$ make install
+	
+Don't forget to extend the the GOPATH variable to include the GOSPEL project:
 
-N.B.: Because of dependencies you must run `make install` first before you
-can run `make` later (if required after code changes in the library).
+	$ export GOPATH=${GOPATH}:/opt/go/libs/gospel 
 
 ### SID
 
@@ -60,19 +83,23 @@ SID is the Open-Source framework to write customized SID applications. To
 install the SID framework library on your computer, simply issue the
 following commands:
 
-	$ cd /opt/go-libs
+	$ cd /opt/go/libs
 	$ git clone git://github.com/bfix/sid sid
 	$ cd sid/sid
 	$ make install
 
+Don't forget to extend the the GOPATH variable to include the SID project:
+
+	$ export GOPATH=${GOPATH}:/opt/go/libs/sid 
+
 Building the custom SID application
 -----------------------------------
 
-To build the custom SID application, change into the source directory and build the
-target:
+To build the custom SID application, change into the source directory and
+build the target:
 
-	$ cd sid
-	$ make
+	$ cd src
+	$ make install
 
-The command is named 'sid' and resides in the source directory. Copy the executable
-to a suitable runtime directory and start the SID server (see RUNNING.mkd)
+The command is named 'sid' and resides in the runtime directory. See
+RUNNING.mkd on how to run the SID instance
