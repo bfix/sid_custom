@@ -49,7 +49,7 @@ func main() {
 		// return new custom cover instance
 		return NewCover()
 	}
-	
+
 	// set HTTP fallback handler
 	sid.HttpFallback = NewRedir("https://www.eff.org")
 

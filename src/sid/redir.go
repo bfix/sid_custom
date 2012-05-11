@@ -24,9 +24,9 @@ package main
 // Import external declarations.
 
 import (
-	"text/template"
 	"bufio"
 	"net"
+	"text/template"
 )
 
 ///////////////////////////////////////////////////////////////////////
