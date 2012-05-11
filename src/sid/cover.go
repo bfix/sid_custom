@@ -38,11 +38,12 @@ import (
 func NewCover() *sid.Cover {
 	// allocate cover instance
 	cover := &sid.Cover{
-		Address:       "imgon.net:80",
-		States:        make(map[net.Conn]*sid.State),
-		Posts:         make(map[string]([]byte)),
-		Pages:         make(map[string]string),
-		GetUploadForm: GetUploadForm,
+		Address:         "imgon.net:80",
+		States:          make(map[net.Conn]*sid.State),
+		Posts:           make(map[string]([]byte)),
+		Pages:           make(map[string]string),
+		GetUploadForm:   GetUploadForm,
+		GenCoverContent: GenCoverContent,
 	}
 	cover.Pages["/"] = "[UPLOAD]"
 	return cover
@@ -50,14 +51,24 @@ func NewCover() *sid.Cover {
 
 //---------------------------------------------------------------------
 /*
+ * Generate cover content based on the content length of a client
+ * POST request.
+ * @param c *sid.Cover - instance reference
+ * @param s *sid.State - reference to cover state
+ * @return []byte - cover content
+ */
+func GenCoverContent(c *sid.Cover, s *sid.State) []byte {
+	return nil
+}
+
+//---------------------------------------------------------------------
+/*
  * Get client-side upload form for next cover content.
- * @param delim striong - boundary identifier
- * @param name string - image name
- * @param mime string - image MIME type
- * @param cmt stribng - image comment
- * @param data []byte - image data (base64-encoded)
- * @return string - action name
- * @return int - size of cover content
+ * Generate (pre-define) the cover content for the next upload and
+ * construct an appropriate upload form for the client. 
+ * @param c *sid.Cover - instance reference
+ * @param s *sid.State - reference to cover state
+ * @return string - upload form (client-side)
  *
  * =====================================
  * POST request format for cover server:
@@ -95,7 +106,7 @@ func NewCover() *sid.Cover {
  *-----------------------------<boundary>--
  *<nl>
  */
-func GetUploadForm(c *sid.Cover) string {
+func GetUploadForm(c *sid.Cover, s *sid.State) string {
 
 	// create boundary identifier and load next image
 	delim := sid.CreateId(30)
