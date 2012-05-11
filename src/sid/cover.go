@@ -1,6 +1,42 @@
 /*
  * Custom cover server implementation: Example for a simple image
  * cover server using the public picture post "imgon.net".
+ * The POST request format for cover server looks like this:
+ *
+ *  ___________________________________________________________________
+ *  |
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="imgUrl"
+ *  |
+ *  |
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="fileName[]"
+ *  |
+ *  |
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="file[]"; filename="<name>"
+ *  |Content-Type: <mime>
+ *  |
+ *  |<content>
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="alt[]"
+ *  |
+ *  |<description>
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="new_width[]"
+ *  |
+ *  |
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="new_height[]"
+ *  |
+ *  |
+ *  |-----------------------------<boundary>
+ *  |Content-Disposition: form-data; name="submit"
+ *  |
+ *  |Upload
+ *  |-----------------------------<boundary>--
+ *  |
+ *  |__________________________________________________________________
  *
  * (c) 2012 Bernd Fix   >Y<
  *
@@ -38,15 +74,26 @@ import (
 func NewCover() *sid.Cover {
 	// allocate cover instance
 	cover := &sid.Cover{
-		Address:         "imgon.net:80",
-		States:          make(map[net.Conn]*sid.State),
-		Posts:           make(map[string]([]byte)),
-		Pages:           make(map[string]string),
-		GetUploadForm:   GetUploadForm,
-		GenCoverContent: GenCoverContent,
+		Address:       "imgon.net:80",
+		States:        make(map[net.Conn]*sid.State),
+		Posts:         make(map[string]([]byte)),
+		Pages:         make(map[string]string),
+		GetUploadForm: GetUploadForm,
+		SyncCover:     SyncCover,
+		FinalizeCover: FinalizeCover,
 	}
 	cover.Pages["/"] = "[UPLOAD]"
 	return cover
+}
+
+//---------------------------------------------------------------------
+/*
+ * Synchronize cover content based on completely parsed HTML cover
+ * response.
+ * @param c *sid.Cover - instance reference
+ * @param s *sid.State - reference to cover state
+ */
+func SyncCover(c *sid.Cover, s *sid.State) {
 }
 
 //---------------------------------------------------------------------
@@ -57,8 +104,8 @@ func NewCover() *sid.Cover {
  * @param s *sid.State - reference to cover state
  * @return []byte - cover content
  */
-func GenCoverContent(c *sid.Cover, s *sid.State) []byte {
-	return nil
+func FinalizeCover(c *sid.Cover, s *sid.State) []byte {
+	return s.ReqCoverPost
 }
 
 //---------------------------------------------------------------------
@@ -68,45 +115,10 @@ func GenCoverContent(c *sid.Cover, s *sid.State) []byte {
  * construct an appropriate upload form for the client. 
  * @param c *sid.Cover - instance reference
  * @param s *sid.State - reference to cover state
- * @return string - upload form (client-side)
- *
- * =====================================
- * POST request format for cover server:
- * =====================================
- *
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="imgUrl"
- *<nl>
- *<nl>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="fileName[]"
- *<nl>
- *<nl>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="file[]"; filename="<name>"
- *Content-Type: <mime>
- *<nl>
- *<content>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="alt[]"
- *<nl>
- *<description>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="new_width[]"
- *<nl>
- *<nl>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="new_height[]"
- *<nl>
- *<nl>
- *-----------------------------<boundary>
- *Content-Disposition: form-data; name="submit"
- *<nl>
- *Upload
- *-----------------------------<boundary>--
- *<nl>
+ * @return form string - upload form (client-side)
+ * @return id string - identifier for cover content
  */
-func GetUploadForm(c *sid.Cover, s *sid.State) string {
+func GetUploadForm(c *sid.Cover, s *sid.State) (form string, id string) {
 
 	// create boundary identifier and load next image
 	delim := sid.CreateId(30)
@@ -119,7 +131,7 @@ func GetUploadForm(c *sid.Cover, s *sid.State) string {
 		return true
 	}); err != nil {
 		logger.Println(logger.ERROR, "[cover] Failed to open upload file: "+img.path)
-		return ""
+		return "", ""
 	}
 
 	// build POST content suitable for upload to cover site
@@ -129,30 +141,21 @@ func GetUploadForm(c *sid.Cover, s *sid.State) string {
 	lb3 := lb2 + lb
 	sep := "-----------------------------" + delim
 	post :=
-		sep + lb +
-			"Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"file[]\"; filename=\"" + img.name + "\"" + lb +
-			"Content-Type: " + img.mime + lb2 +
-			string(content) + lb +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"alt[]\"\n\n" +
-			img.comment + lb +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
-			sep + lb +
-			"Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
+		sep + lb + "Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
+			sep + lb + "Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
+			sep + lb + "Content-Disposition: form-data; name=\"file[]\"; filename=\"" +
+			img.name + "\"" + lb + "Content-Type: " + img.mime + lb2 + string(content) + lb +
+			sep + lb + "Content-Disposition: form-data; name=\"alt[]\"\n\n" + img.comment + lb +
+			sep + lb + "Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
+			sep + lb + "Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
+			sep + lb + "Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
 			sep + "--" + lb2
-
 	c.Posts[delim] = []byte(post)
+
+	// assemble upload form
 	action := "/upload/" + delim
 	total := len(c.Posts[delim]) + 32
 
-	// assemble upload form
 	return "<h1>Upload your document:</h1>\n" +
 		"<script type=\"text/javascript\">\n" +
 		"function a(){" +
@@ -174,5 +177,5 @@ func GetUploadForm(c *sid.Cover, s *sid.State) string {
 		"Uploading files requires JavaScript enabled! Please change the settings " +
 		"of your browser and try again...</b></font></p><hr/>" +
 		"</noscript>\n" +
-		"<hr/>\n"
+		"<hr/>\n", delim
 }
