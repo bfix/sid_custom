@@ -12,11 +12,14 @@ else
 GOPATH := $(BASE)
 endif
 
-install:
-	GOPATH=$(GOPATH) go build -o ../runtime/sid -v ./...
+install:	fmt
+	GOPATH=$(GOPATH) go build -o ../runtime/sid.app -v ./...
 
 test:
 	go test ./...
 
 clean:
 	go clean -i ./...
+
+fmt:
+	go fmt ./...
