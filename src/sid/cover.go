@@ -73,7 +73,7 @@ import (
  */
 func NewCover() *sid.Cover {
 	// allocate cover instance
-	cover := &sid.Cover{
+	return &sid.Cover{
 		Name:          "imgon.net",
 		Port:          80,
 		Protocol:      "http",
@@ -84,8 +84,6 @@ func NewCover() *sid.Cover {
 		SyncCover:     SyncCover,
 		FinalizeCover: FinalizeCover,
 	}
-	cover.Pages["/"] = "[UPLOAD]"
-	return cover
 }
 
 //---------------------------------------------------------------------
@@ -112,72 +110,94 @@ func FinalizeCover(c *sid.Cover, s *sid.State) []byte {
 
 //---------------------------------------------------------------------
 /*
- * Get client-side upload form for next cover content.
- * Generate (pre-define) the cover content for the next upload and
- * construct an appropriate upload form for the client. 
+ * Handle (HTML) resource request with special cases like "upload".
  * @param c *sid.Cover - instance reference
  * @param s *sid.State - reference to cover state
- * @return form string - upload form (client-side)
- * @return id string - identifier for cover content
+ * @return body string - HTML page body
+ * @return id string - identifier for cover content (or "")
  */
-func GetUploadForm(c *sid.Cover, s *sid.State) (form string, id string) {
+func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 
-	// create boundary identifier and load next image
-	delim := sid.CreateId(28)
-	img := GetNextImage()
-
-	// create uploadable content 
-	content := make([]byte, 0)
-	if err := sid.ProcessFile(img.path, 4096, func(data []byte) bool {
-		content = append(content, data...)
-		return true
-	}); err != nil {
-		logger.Println(logger.ERROR, "[cover] Failed to open upload file: "+img.path)
-		return "", ""
+	//=================================================================
+	// Handle upload request on root page
+	//=================================================================
+	if s.ReqResource == "/" {
+		// create boundary identifier and load next image
+		delim := sid.CreateId(28)
+		img := GetNextImage()
+	
+		// create uploadable content 
+		content := make([]byte, 0)
+		if err := sid.ProcessFile(img.path, 4096, func(data []byte) bool {
+			content = append(content, data...)
+			return true
+		}); err != nil {
+			logger.Println(logger.ERROR, "[cover] Failed to open upload file: "+img.path)
+			return "", ""
+		}
+	
+		// build POST content suitable for upload to cover site
+		// and save it in the handler structure
+		lb := "\r\n"
+		lb2 := lb + lb
+		lb3 := lb2 + lb
+		sep := "-----------------------------" + delim
+		post :=
+			sep + lb + "Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
+				sep + lb + "Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
+				sep + lb + "Content-Disposition: form-data; name=\"file[]\"; filename=\"" +
+				img.name + "\"" + lb + "Content-Type: " + img.mime + lb2 + string(content) + lb +
+				sep + lb + "Content-Disposition: form-data; name=\"alt[]\"\n\n" + img.comment + lb +
+				sep + lb + "Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
+				sep + lb + "Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
+				sep + lb + "Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
+				sep + "--" + lb2
+		c.Posts[delim] = []byte(post)
+	
+		// assemble upload form
+		action := "/upload/" + delim
+		total := len(c.Posts[delim]) + 32
+	
+		return "<h1>Upload your document:</h1>\n" +
+			"<script type=\"text/javascript\">\n" +
+			"function a(){" +
+			"b=document.u.file.files.item(0).getAsDataURL();" +
+			"e=document.u.file.value.length;" +
+			"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
+			"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
+			"document.u.rnd.value=d;" +
+			"document.u.submit();" +
+			"}\n" +
+			"document.write(\"" +
+			"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
+			"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
+			"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
+			"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
+			"</form>\");\n" +
+			"</script>\n</head>\n<body>\n" +
+			"<noscript><hr/><p><font color=\"red\"><b>" +
+			"Uploading files requires JavaScript enabled! Please change the settings " +
+			"of your browser and try again...</b></font></p><hr/>" +
+			"</noscript>\n" +
+			"<hr/>\n", delim
 	}
 
-	// build POST content suitable for upload to cover site
-	// and save it in the handler structure
-	lb := "\r\n"
-	lb2 := lb + lb
-	lb3 := lb2 + lb
-	sep := "-----------------------------" + delim
-	post :=
-		sep + lb + "Content-Disposition: form-data; name=\"imgUrl\"" + lb3 +
-			sep + lb + "Content-Disposition: form-data; name=\"fileName[]\"" + lb3 +
-			sep + lb + "Content-Disposition: form-data; name=\"file[]\"; filename=\"" +
-			img.name + "\"" + lb + "Content-Type: " + img.mime + lb2 + string(content) + lb +
-			sep + lb + "Content-Disposition: form-data; name=\"alt[]\"\n\n" + img.comment + lb +
-			sep + lb + "Content-Disposition: form-data; name=\"new_width[]\"" + lb3 +
-			sep + lb + "Content-Disposition: form-data; name=\"new_height[]\"" + lb3 +
-			sep + lb + "Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
-			sep + "--" + lb2
-	c.Posts[delim] = []byte(post)
+	//=================================================================
+	//	Successful upload
+	//=================================================================
+	if s.ReqResource == "/success.html" {
+		logger.Println(logger.INFO, "[sid.cover] Successful upload detected!")
+		return "<h1>Upload was successful!</h1>", ""
+	}
 
-	// assemble upload form
-	action := "/upload/" + delim
-	total := len(c.Posts[delim]) + 32
+	//=================================================================
+	//	Error during upload
+	//=================================================================
+	if s.ReqResource == "/error.html" {
+		logger.Println(logger.INFO, "[sid.cover] Failed upload detected!")
+		return "<h1>Upload was NOT successful -- please retry later!</h1>", ""
+	}
 
-	return "<h1>Upload your document:</h1>\n" +
-		"<script type=\"text/javascript\">\n" +
-		"function a(){" +
-		"b=document.u.file.files.item(0).getAsDataURL();" +
-		"e=document.u.file.value.length;" +
-		"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
-		"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
-		"document.u.rnd.value=d;" +
-		"document.u.submit();" +
-		"}\n" +
-		"document.write(\"" +
-		"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
-		"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
-		"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
-		"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
-		"</form>\");\n" +
-		"</script>\n</head>\n<body>\n" +
-		"<noscript><hr/><p><font color=\"red\"><b>" +
-		"Uploading files requires JavaScript enabled! Please change the settings " +
-		"of your browser and try again...</b></font></p><hr/>" +
-		"</noscript>\n" +
-		"<hr/>\n", delim
+	// any unhandled page request:
+	return "<h1>Unknown webpage requested</h1><h3>Please restart upload process!</h3>", ""
 }
