@@ -79,8 +79,7 @@ func NewCover() *sid.Cover {
 		Protocol:      "http",
 		States:        make(map[net.Conn]*sid.State),
 		Posts:         make(map[string]([]byte)),
-		Pages:         make(map[string]string),
-		GetUploadForm: GetUploadForm,
+		HandleRequest: HandleRequest,
 		SyncCover:     SyncCover,
 		FinalizeCover: FinalizeCover,
 	}
@@ -125,7 +124,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 		// create boundary identifier and load next image
 		delim := sid.CreateId(28)
 		img := GetNextImage()
-	
+
 		// create uploadable content 
 		content := make([]byte, 0)
 		if err := sid.ProcessFile(img.path, 4096, func(data []byte) bool {
@@ -135,7 +134,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 			logger.Println(logger.ERROR, "[cover] Failed to open upload file: "+img.path)
 			return "", ""
 		}
-	
+
 		// build POST content suitable for upload to cover site
 		// and save it in the handler structure
 		lb := "\r\n"
@@ -153,11 +152,11 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 				sep + lb + "Content-Disposition: form-data; name=\"submit\"" + lb2 + "Upload" + lb +
 				sep + "--" + lb2
 		c.Posts[delim] = []byte(post)
-	
+
 		// assemble upload form
 		action := "/upload/" + delim
 		total := len(c.Posts[delim]) + 32
-	
+
 		return "<h1>Upload your document:</h1>\n" +
 			"<script type=\"text/javascript\">\n" +
 			"function a(){" +
