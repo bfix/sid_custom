@@ -74,7 +74,9 @@ import (
 func NewCover() *sid.Cover {
 	// allocate cover instance
 	cover := &sid.Cover{
-		Address:       "imgon.net:80",
+		Name:          "imgon.net",
+		Port:          80,
+		Protocol:      "http",
 		States:        make(map[net.Conn]*sid.State),
 		Posts:         make(map[string]([]byte)),
 		Pages:         make(map[string]string),
@@ -121,7 +123,7 @@ func FinalizeCover(c *sid.Cover, s *sid.State) []byte {
 func GetUploadForm(c *sid.Cover, s *sid.State) (form string, id string) {
 
 	// create boundary identifier and load next image
-	delim := sid.CreateId(30)
+	delim := sid.CreateId(28)
 	img := GetNextImage()
 
 	// create uploadable content 
