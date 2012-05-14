@@ -104,7 +104,14 @@ func SyncCover(c *sid.Cover, s *sid.State) {
  * @return []byte - cover content
  */
 func FinalizeCover(c *sid.Cover, s *sid.State) []byte {
-	return s.ReqCoverPost
+	id, ok := s.Data["CoverId"]
+	if !ok || len(id) == 0 {
+		logger.Println(logger.WARN, "[cover] No CoverId found!")
+		return nil
+	}
+	out := c.Posts[id]
+	logger.Println(logger.DBG_ALL, "[cover] *** "+string(out))
+	return out
 }
 
 //---------------------------------------------------------------------
@@ -154,7 +161,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 		c.Posts[delim] = []byte(post)
 
 		// assemble upload form
-		action := "/upload/" + delim
+		action := "/" + delim + "/upload"
 		total := len(c.Posts[delim]) + 32
 
 		return "<h1>Upload your document:</h1>\n" +
@@ -185,7 +192,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 	//	Successful upload
 	//=================================================================
 	if s.ReqResource == "/success.html" {
-		logger.Println(logger.INFO, "[sid.cover] Successful upload detected!")
+		logger.Println(logger.INFO, "[cover] Successful upload detected!")
 		return "<h1>Upload was successful!</h1>", ""
 	}
 
@@ -193,7 +200,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 	//	Error during upload
 	//=================================================================
 	if s.ReqResource == "/error.html" {
-		logger.Println(logger.INFO, "[sid.cover] Failed upload detected!")
+		logger.Println(logger.INFO, "[cover] Failed upload detected!")
 		return "<h1>Upload was NOT successful -- please retry later!</h1>", ""
 	}
 
