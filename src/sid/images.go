@@ -54,7 +54,7 @@ import (
  * List of images (for XML parsing)
  */
 type ImageList struct {
-	Image []ImageDef
+	Image []ImageDef `xml:"image"`
 }
 
 //=====================================================================
@@ -65,10 +65,10 @@ type ImageDef struct {
 	//-----------------------------------------------------------------
 	// XML mapped fields
 	//-----------------------------------------------------------------
-	Name    string
-	Comment string
-	Path    string
-	Mime    string
+	Name    string `xml:"name"`
+	Comment string `xml:"comment"`
+	Path    string `xml:"path"`
+	Mime    string `xml:"mime"`
 }
 
 /*
@@ -102,6 +102,7 @@ func InitImageHandler() {
 	if err != nil {
 		// terminate application in case of failure
 		logger.Println(logger.ERROR, "[images] Can't read image definitions -- terminating!")
+		logger.Println(logger.ERROR, "[images] "+err.Error())
 		os.Exit(1)
 	}
 	defer rdr.Close()
@@ -109,7 +110,12 @@ func InitImageHandler() {
 	// parse XML file and build image reference list
 	decoder := xml.NewDecoder(rdr)
 	var list ImageList
-	decoder.Decode(&list)
+	if err = decoder.Decode(&list); err != nil {
+		// terminate application in case of failure
+		logger.Println(logger.ERROR, "[images] Can't decode image definitions -- terminating!")
+		logger.Println(logger.ERROR, "[images] "+err.Error())
+		os.Exit(1)
+	}
 	for _, img := range list.Image {
 		logger.Println(logger.DBG, "[images]: image="+img.Name)
 		// get size of image file
