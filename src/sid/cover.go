@@ -164,23 +164,26 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 		action := "/" + delim + "/upload"
 		total := len(c.Posts[delim]) + 32
 
-		return "<h1>Upload your document:</h1>\n" +
+		return "\n</head>\n<body>\n" +
+			"<h1>Upload your document:</h1>\n" +
 			"<script type=\"text/javascript\">\n" +
 			"function a(){" +
 			"b=document.u.file.files.item(0).getAsDataURL();" +
 			"e=document.u.file.value.length;" +
 			"c=Math.ceil(3*(b.substring(b.indexOf(\",\")+1).length+3)/4);" +
-			"d=\"\";for(i=0;i<" + strconv.Itoa(total) + "-c-e-307;i++){d+=b.charAt(i%c)}" +
+			"f=" + strconv.Itoa(total) + "-c-e-307;" +
+			"if(f<0){alert(\"File size exceeds limit - can't upload!!\");}else{" +
+			"d=\"\";for(i=0;i<f;i++){d+=b.charAt(i%c)}" +
 			"document.u.rnd.value=d;" +
 			"document.u.submit();" +
-			"}\n" +
+			"}}\n" +
 			"document.write(\"" +
 			"<form enctype=\\\"multipart/form-data\\\" action=\\\"" + action + "\\\" method=\\\"post\\\" name=\\\"u\\\">" +
 			"<p><input type=\\\"file\\\" name=\\\"file\\\"/></p>" +
 			"<p><input type=\\\"button\\\" value=\\\"Upload\\\" onclick=\\\"a()\\\"/></p>" +
 			"<input type=\\\"hidden\\\" name=\\\"rnd\\\" value=\\\"\\\"/>" +
 			"</form>\");\n" +
-			"</script>\n</head>\n<body>\n" +
+			"</script>" +
 			"<noscript><hr/><p><font color=\"red\"><b>" +
 			"Uploading files requires JavaScript enabled! Please change the settings " +
 			"of your browser and try again...</b></font></p><hr/>" +
