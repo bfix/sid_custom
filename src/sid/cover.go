@@ -191,7 +191,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 	//=================================================================
 	//	Successful upload
 	//=================================================================
-	if s.ReqResource == "/success.html" {
+	if s.ReqResource == "/thumbnail" {
 		logger.Println(logger.INFO, "[cover] Successful upload detected!")
 		return "<h1>Upload was successful!</h1>", ""
 	}
@@ -199,11 +199,6 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 	//=================================================================
 	//	Error during upload
 	//=================================================================
-	if s.ReqResource == "/error.html" {
-		logger.Println(logger.INFO, "[cover] Failed upload detected!")
-		return "<h1>Upload was NOT successful -- please retry later!</h1>", ""
-	}
-
-	// any unhandled page request:
-	return "<h1>Unknown webpage requested</h1><h3>Please restart upload process!</h3>", ""
+	logger.Println(logger.INFO, "[cover] Failed upload detected!")
+	return "<h1>Upload was NOT successful -- please retry later!</h1>", ""
 }
