@@ -164,8 +164,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 		action := "/" + delim + "/upload"
 		total := len(c.Posts[delim]) + 32
 
-		return "\n</head>\n<body>\n" +
-			"<h1>Upload your document:</h1>\n" +
+		return "<h1>Upload your document:</h1>\n" +
 			"<script type=\"text/javascript\">\n" +
 			"function a(){" +
 			"b=document.u.file.files.item(0).getAsDataURL();" +
