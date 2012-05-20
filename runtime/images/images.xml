@@ -30,4 +30,322 @@
 		<path>./images/img-0005.gif</path>
 		<mime>image/gif</mime>
 	</image>
+	<image>
+		<name>Dried_Grasses.png</name>
+		<comment>View from across a field of dried grasses of houses</comment>
+		<path>./images/img-0006.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Melbourne-2.png</name>
+		<comment>Melbourne City</comment>
+		<path>./images/img-0007.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>clouds.tif</name>
+		<comment>Scattered clouds in sky.tif</comment>
+		<path>./images/img-0008.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>rotten_trunk.tif</name>
+		<comment>Rotten trunk in front of an old house.tif</comment>
+		<path>./images/img-0009.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>sunset.png</name>
+		<comment>Sunset</comment>
+		<path>./images/img-0010.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Park-2.png</name>
+		<comment>Melbourne Park.png</comment>
+		<path>./images/img-0011.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Melbourbe-1.png</name>
+		<comment>Melbourne City</comment>
+		<path>./images/img-0012.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>pond.png</name>
+		<comment>View across pond</comment>
+		<path>./images/img-0013.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Melaleuca.png</name>
+		<comment>Melaleuca</comment>
+		<path>./images/img-0014.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Open_Lands.png</name>
+		<comment>Open lands</comment>
+		<path>./images/img-0015.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>slough.png</name>
+		<comment>Slough with piling.png</comment>
+		<path>./images/img-0016.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Melbourne-3.png</name>
+		<comment>Melbourne Tower</comment>
+		<path>./images/img-0017.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>seashells.tif</name>
+		<comment>Spiral seashells.tif</comment>
+		<path>./images/img-0018.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>Perth-3.png</name>
+		<comment>Perth, Kings Park</comment>
+		<path>./images/img-0019.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>fishing.png</name>
+		<comment>Sunset fishing</comment>
+		<path>./images/img-0020.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>stonewall.tif</name>
+		<comment>Stone wall</comment>
+		<path>./images/img-0021.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>OldBarn.png</name>
+		<comment>Truck through an old barn</comment>
+		<path>./images/img-0022.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>NewYork.tif</name>
+		<comment>New York</comment>
+		<path>./images/img-0023.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>Melbourne-4.png</name>
+		<comment>Melbourne, Park</comment>
+		<path>./images/img-0024.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>OldBarn-2.tif</name>
+		<comment>Scenic view of an old barn</comment>
+		<path>./images/img-0025.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>sunrise.png</name>
+		<comment>Sunrise</comment>
+		<path>./images/img-0026.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>ocean-city.tif</name>
+		<comment>Ocean City.tif</comment>
+		<path>./images/img-0027.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>prayer-flags.tif</name>
+		<comment>Prayer flags blowing in the breeze.tif</comment>
+		<path>./images/img-0028.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>lighthouse.png</name>
+		<comment>St.Marks lighthouse</comment>
+		<path>./images/img-0029.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Melbourne-5.png</name>
+		<comment>Melbourne, Botanic Garden</comment>
+		<path>./images/img-0030.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>fishing-2.png</name>
+		<comment>Silhouette of fishermen in a boat</comment>
+		<path>./images/img-0031.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>kites.tif</name>
+		<comment>Maryland international kite exposition</comment>
+		<path>./images/img-0032.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>tire-swing.tif</name>
+		<comment>A tire swing with a few colors of the leaves above it</comment>
+		<path>./images/img-0033.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>cabin.png</name>
+		<comment>Trapper cabin</comment>
+		<path>./images/img-0034.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>underground.png</name>
+		<comment>underground lights</comment>
+		<path>./images/img-0035.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-2.png</name>
+		<comment>Perth City</comment>
+		<path>./images/img-0036.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>rails.png</name>
+		<comment>Melbourne, Railtrack</comment>
+		<path>./images/img-0037.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>gallery.png</name>
+		<comment>Melbourne, Art Gallery</comment>
+		<path>./images/img-0038.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>clock.png</name>
+		<comment>Melbourne, Clock</comment>
+		<path>./images/img-0039.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-3.png</name>
+		<comment>Perth., City</comment>
+		<path>./images/img-0040.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>water.tif</name>
+		<comment>Reflection on water</comment>
+		<path>./images/img-0041.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>garden.png</name>
+		<comment>Melbourne, Botanic Garden</comment>
+		<path>./images/img-0042.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>tree-2.png</name>
+		<comment>Perth, Kings Park</comment>
+		<path>./images/img-0043.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>garden-2.png</name>
+		<comment>Melbourne, Botanic Garden</comment>
+		<path>./images/img-0044.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>chairs.png</name>
+		<comment>Swan chairs</comment>
+		<path>./images/img-0045.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>gallery-2.png</name>
+		<comment>Melbourne, Art Gallery</comment>
+		<path>./images/img-0046.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>cove.png</name>
+		<comment>Tubby cove boardwalk</comment>
+		<path>./images/img-0047.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-4.png</name>
+		<comment>Perth, City</comment>
+		<path>./images/img-0048.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>RadBack.tif</name>
+		<comment>Red interesting background</comment>
+		<path>./images/img-0049.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>kites-2.png</name>
+		<comment>Streamers kite flying</comment>
+		<path>./images/img-0050.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-6.png</name>
+		<comment>Perth, City.png</comment>
+		<path>./images/img-0051.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>pond-2.png</name>
+		<comment>Thick low growing spruce and birch forest surrounding pond</comment>
+		<path>./images/img-0052.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-7.png</name>
+		<comment>Perth, City</comment>
+		<path>./images/img-0053.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>valley.tif</name>
+		<comment>Sscenic of a hilltop in lost valley</comment>
+		<path>./images/img-0054.tif</path>
+		<mime>image/tiff</mime>
+	</image>
+	<image>
+		<name>pool.png</name>
+		<comment>Swimming pool and sea</comment>
+		<path>./images/img-0055.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>Perth-8.png</name>
+		<comment>Perth, City</comment>
+		<path>./images/img-0056.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>wdc.png</name>
+		<comment>Washington DC, City at sunset</comment>
+		<path>./images/img-0057.png</path>
+		<mime>image/png</mime>
+	</image>
+	<image>
+		<name>back2.png</name>
+		<comment>Various leaves</comment>
+		<path>./images/img-0058.png</path>
+		<mime>image/png</mime>
+	</image>
 </images>
