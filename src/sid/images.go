@@ -25,8 +25,8 @@ package main
 
 import (
 	"encoding/xml"
-	"gospel/crypto"
-	"gospel/logger"
+	"github.com/bfix/gospel/crypto"
+	"github.com/bfix/gospel/logger"
 	"os"
 )
 
@@ -92,7 +92,7 @@ var imgList []*ImageRef
 /*
  * Initialize image handler: read image definitions from the file
  * specified by the "defs" argument.
- * @param defs string - name of XML-based image definitions 
+ * @param defs string - name of XML-based image definitions
  */
 func InitImageHandler() {
 

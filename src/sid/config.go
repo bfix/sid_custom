@@ -24,8 +24,8 @@ package main
 // Import external declarations.
 
 import (
-	"gospel/logger"
-	"gospel/parser"
+	"github.com/bfix/gospel/logger"
+	"github.com/bfix/gospel/parser"
 	"sid"
 	"strconv"
 )

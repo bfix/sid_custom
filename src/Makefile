@@ -1,25 +1,20 @@
 
 PWD := $(shell pwd)
+SID := ${PWD}/../../SID
 BASE := $(shell dirname $(PWD))
 
 ifneq ($(shell basename $(PWD)), src)
 $(error Not in source directory - you are here: '${PWD}')
 endif
 
-ifneq ($(strip $(GOPATH)),)
-GOPATH := ${GOPATH}:$(BASE)
-else
-GOPATH := $(BASE)
-endif
-
 install:	fmt
-	GOPATH=$(GOPATH) go build -o ../runtime/sid.app -v ./...
+	GOPATH=${SID}:${GOPATH} go build -o ../runtime/sid.app -v ./...
 
 test:
 	go test ./...
 
 clean:
 	go clean -i ./...
-
+	
 fmt:
 	go fmt ./...

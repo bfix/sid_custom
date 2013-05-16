@@ -92,7 +92,7 @@ func (self *Redir) Process(client net.Conn) {
 		}
 	}
 
-	// send redirection response	
+	// send redirection response
 	redirTempl.Execute(client, self)
 }
 

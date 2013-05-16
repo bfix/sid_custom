@@ -60,7 +60,7 @@ package main
 // Import external declarations.
 
 import (
-	"gospel/logger"
+	"github.com/bfix/gospel/logger"
 	"net"
 	"sid"
 	"strconv"
@@ -132,7 +132,7 @@ func HandleRequest(c *sid.Cover, s *sid.State) (body string, id string) {
 		delim := sid.CreateId(28)
 		img := GetNextImage()
 
-		// create uploadable content 
+		// create uploadable content
 		content := make([]byte, 0)
 		if err := sid.ProcessFile(img.path, 4096, func(data []byte) bool {
 			content = append(content, data...)
